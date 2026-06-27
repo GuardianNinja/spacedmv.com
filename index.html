@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Space DMV – Civilian Starship Registry</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050814;
+      --bg-alt: #0b1020;
+      --accent: #4fd1c5;
+      --accent-soft: #2c5282;
+      --text: #e2e8f0;
+      --muted: #a0aec0;
+      --border: #2d3748;
+      --danger: #f56565;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1a365d 0, #050814 45%, #000 100%);
+      color: var(--text);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header.app-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(5, 8, 20, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .app-header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .brand-text-main {
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+    .brand-text-sub {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    nav.app-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+    nav.app-nav a {
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+    nav.app-nav a:hover {
+      border-color: var(--accent-soft);
+      background: rgba(44, 82, 130, 0.35);
+    }
+
+    main.app-main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+
+    .hero {
+      padding: 2rem 1.5rem;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, rgba(79, 209, 197, 0.12), rgba(26, 32, 44, 0.9));
+      border: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .hero-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .hero-subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .badge-accent {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+    }
+    .btn-primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #0b1020;
+      font-weight: 600;
+    }
+    .btn-outline {
+      background: transparent;
+    }
+    .btn span.icon {
+      font-size: 0.9rem;
+    }
+
+    .hero-panel {
+      border-radius: 0.9rem;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 1rem;
+      font-size: 0.8rem;
+    }
+    .hero-panel-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .hero-panel-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.25rem 0 0;
+    }
+    .hero-panel-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+      margin-bottom: 0.35rem;
+      color: var(--muted);
+    }
+    .hero-panel-list li span.icon {
+      font-size: 0.8rem;
+      color: var(--accent);
+      margin-top: 0.1rem;
+    }
+
+    .section {
+      margin-top: 2.5rem;
+      padding: 1.5rem 1.5rem;
+      border-radius: 1rem;
+      background: rgba(11, 16, 32, 0.95);
+      border: 1px solid var(--border);
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .section-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.9rem;
+      font-size: 0.8rem;
+    }
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+    .card-meta {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .card-body {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .pill {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .pill-accent {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .update-log {
+      font-size: 0.8rem;
+      border-radius: 0.75rem;
+      border: 1px dashed var(--border);
+      padding: 0.75rem;
+      background: rgba(15, 23, 42, 0.7);
+    }
+    .update-log-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.4rem;
+    }
+    .update-log-item span.label {
+      color: var(--muted);
+    }
+    .update-log-item span.value {
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    footer.app-footer {
+      border-top: 1px solid var(--border);
+      padding: 1rem 1.25rem 1.5rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+      background: rgba(5, 8, 20, 0.95);
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body class="app">
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="brand">
+        <div class="brand-mark">DMV</div>
+        <div>
+          <div class="brand-text-main">Space DMV</div>
+          <div class="brand-text-sub">Civilian Starship Registry · Space LEAF Corp</div>
+        </div>
+      </div>
+      <nav class="app-nav">
+        <a href="#home">Home</a>
+        <a href="#orientation">Orientation</a>
+        <a href="#training-manual">Training Manual</a>
+        <a href="#licensing">Licensing</a>
+        <a href="#registry">Vehicle Registry</a>
+        <a href="#appointments">Appointments</a>
+        <a href="#fleet-updates">Fleet Updates</a>
+        <a href="#governance">Governance</a>
+        <a href="#dashboard">Operator Dashboard</a>
+        <a href="#leaf-universe">LEAF Universe</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="app-main" id="home">
+    <!-- Hero / Home -->
+    <section class="hero">
+      <div>
+        <div class="hero-title">Welcome, Captain. Your fleet is in civilian orbit.</div>
+        <div class="hero-subtitle">
+          Space DMV is a non‑governmental, nonprofit division of Space LEAF Corp, created to support
+          civilian‑safe registration, licensing, and training for advanced vehicles and starships.
+        </div>
+        <div class="hero-badges">
+          <span class="badge badge-accent">Civilian‑Safe</span>
+          <span class="badge">Non‑Governmental</span>
+          <span class="badge">Educational & Ceremonial</span>
+        </div>
+        <div class="hero-actions">
+          <a href="#orientation" class="btn btn-primary">
+            <span class="icon">🚀</span>
+            <span>Begin Adult Orientation</span>
+          </a>
+          <a href="#licensing" class="btn btn-outline">
+            <span class="icon">📜</span>
+            <span>View Civic Stewardship License</span>
+          </a>
+          <a href="#fleet-updates" class="btn btn-outline">
+            <span class="icon">🛰️</span>
+            <span>Check Fleetwide Updates</span>
+          </a>
+        </div>
+      </div>
+      <aside class="hero-panel">
+        <div class="hero-panel-title">Operational Readiness Snapshot</div>
+        <ul class="hero-panel-list">
+          <li>
+            <span class="icon">✅</span>
+            <span>All training sequences are ceremonial and educational. No real‑world propulsion or weaponization.</span>
+          </li>
+          <li>
+            <span class="icon">🧭</span>
+            <span>Licensing focuses on microgravity awareness, emotional intelligence, and safe navigation in simulated environments.</span>
+          </li>
+          <li>
+            <span class="icon">🔒</span>
+            <span>Safety Layer enforces hard constraints: no real engineering schematics, no exportable control code, no harmful modeling.</span>
+          </li>
+        </ul>
+      </aside>
+    </section>
+
+    <!-- Orientation -->
+    <section class="section" id="orientation">
+      <div class="section-header">
+        <div class="section-title">Adult Orientation – Threshold of Neutral Buoyancy</div>
+        <div class="section-subtitle">
+          “Your body is a spacecraft. Every limb is a thruster.” – Operational readiness in microgravity environments.
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-title">Microgravity Fundamentals</div>
+          <div class="card-meta">Module · Level I</div>
+          <div class="card-body">
+            Learn how neutral buoyancy changes instinct, posture, and motion. Gravity‑bound habits are gently retrained into
+            controlled, deliberate movement.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Begin Module</span>
+            <span class="pill">Approx. 10 minutes</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Push‑Off Discipline</div>
+          <div class="card-meta">Module · Level I</div>
+          <div class="card-body">
+            Practice safe push‑off techniques: no flailing, no uncontrolled spins. Every contact with a surface is treated as
+            a controlled maneuver.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Begin Module</span>
+            <span class="pill">Includes guided simulation</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Emotional Regulation in Microgravity</div>
+          <div class="card-meta">Module · Level I</div>
+          <div class="card-body">
+            Emotional intelligence is part of flight safety. Learn how to stay calm, communicative, and aware when your body
+            and environment feel unfamiliar.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Begin Module</span>
+            <span class="pill">Includes reflection prompts</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Living Training Manual -->
+    <section class="section" id="training-manual">
+      <div class="section-header">
+        <div class="section-title">Living Training Manual</div>
+        <div class="section-subtitle">
+          A narrative, continuously updating manual that keeps your fleet aligned with current protocols, ethics, and safety rituals.
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-title">Daily Safety Rituals</div>
+          <div class="card-meta">Routine · Captain & Crew</div>
+          <div class="card-body">
+            Morning and evening check‑ins that mirror firewall checks: confirm readiness, review changes, and acknowledge
+            emotional state before operations.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">View Ritual Script</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Emergency Response & Medical Procedures</div>
+          <div class="card-meta">Guide · Humane Methods</div>
+          <div class="card-body">
+            Humane, non‑invasive procedures first; invasive maneuvers only in drastic situations. Emphasis on consent,
+            emotional intelligence, and situational awareness.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Open Procedures Index</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Fleetwide Update System</div>
+          <div class="card-meta">System · Firmware‑Style</div>
+          <div class="card-body">
+            The manual updates like firmware: new rules, protocols, and safety features propagate fleet‑wide at scheduled
+            intervals, with clear captain‑to‑crew messaging.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">View Update Schedule</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Licensing -->
+    <section class="section" id="licensing">
+      <div class="section-header">
+        <div class="section-title">Licensing & Civic Stewardship</div>
+        <div class="section-subtitle">
+          All licenses are ceremonial, educational, and focused on civilian‑safe operation. No governmental authority implied.
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-title">Microgravity Operator – Level I</div>
+          <div class="card-meta">License · Individual</div>
+          <div class="card-body">
+            Confirms completion of core microgravity orientation modules and emotional intelligence training. Symbolic proof
+            of readiness in simulated environments.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">View Requirements</span>
+            <span class="pill">Ceremonial Certificate</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Hammock Zone Certification</div>
+          <div class="card-meta">License · Comfort & Safety</div>
+          <div class="card-body">
+            Training focused on safe rest zones, body positioning, and shared space etiquette in microgravity hammocks and
+            soft‑rest modules.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">View Curriculum</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Civic Stewardship License</div>
+          <div class="card-meta">License · Space LEAF Corp</div>
+          <div class="card-body">
+            Based on the Space LEAF Corp – Space DMV Stewardship License 1.0. Emphasizes non‑weaponization, transparency,
+            and civilian responsibility.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Read License Text</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Vehicle Registry -->
+    <section class="section" id="registry">
+      <div class="section-header">
+        <div class="section-title">Space Vehicle Registry</div>
+        <div class="section-subtitle">
+          A ceremonial registry for starships, shuttles, and advanced vehicles. Uses symbolic identifiers (SVIN/EVIN) for
+          narrative tracking.
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-title">Lookup by SVIN / EVIN</div>
+          <div class="card-meta">Tool · Registry</div>
+          <div class="card-body">
+            Search for a registered vehicle using its Space Vehicle Identification Number (SVIN) or Earth Vehicle Identification
+            Number (EVIN) mapping.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Open Lookup</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Starship Profile Cards</div>
+          <div class="card-meta">View · Fleet</div>
+          <div class="card-body">
+            Each registered vessel has a profile card: name, class, stewardship status, safety seals, and narrative history.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Browse Fleet</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Stewardship History & Safety Seals</div>
+          <div class="card-meta">Log · Compliance</div>
+          <div class="card-body">
+            Track inspections, training completions, and safety rituals associated with each vessel. All entries are symbolic
+            and educational.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">View History</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Appointments -->
+    <section class="section" id="appointments">
+      <div class="section-header">
+        <div class="section-title">Appointments & Simulation Sessions</div>
+        <div class="section-subtitle">
+          Schedule ceremonial orientation sessions, simulation exams, and renewal rituals. No real‑world licensing authority.
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-title">Orientation Sessions</div>
+          <div class="card-meta">Booking · Individual / Crew</div>
+          <div class="card-body">
+            Reserve time to walk through the Adult Orientation sequence with guided narration and interactive modules.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Schedule Session</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Simulation Exams</div>
+          <div class="card-meta">Booking · Narrative</div>
+          <div class="card-body">
+            Ceremonial exams that test understanding of microgravity safety, emotional intelligence, and fleet protocols in
+            simulated scenarios.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">View Exam Types</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Renewal Rituals</div>
+          <div class="card-meta">Booking · Annual</div>
+          <div class="card-body">
+            Annual or periodic renewal ceremonies where captains reaffirm stewardship commitments and review updated protocols.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Plan Renewal</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Fleet Updates -->
+    <section class="section" id="fleet-updates">
+      <div class="section-header">
+        <div class="section-title">Fleetwide Update System</div>
+        <div class="section-subtitle">
+          Firmware‑style updates for rules, protocols, and safety features, propagated across the fleet at scheduled intervals.
+        </div>
+      </div>
+      <div class="update-log">
+        <div class="update-log-item">
+          <span class="label">Next Scheduled Update Window</span>
+          <span class="value">Daily · 06:00 & 22:00 (Captain local time)</span>
+        </div>
+        <div class="update-log-item">
+          <span class="label">Latest Patch</span>
+          <span class="value">v1.2.0 – Emotional Intelligence & Non‑Invasive Medical Procedures</span>
+        </div>
+        <div class="update-log-item">
+          <span class="label">Scope</span>
+          <span class="value">All registered vessels · All operator dashboards</span>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;font-size:0.8rem;color:var(--muted);">
+        At each update window, the system performs a symbolic “firewall check” and pushes narrative changes to the Living
+        Training Manual, licensing modules, and operator dashboards. Captains receive a gentle prompt to review and acknowledge.
+      </div>
+    </section>
+
+    <!-- Governance -->
+    <section class="section" id="governance">
+      <div class="section-header">
+        <div class="section-title">Governance & Transparency</div>
+        <div class="section-subtitle">
+          Space DMV is maintained as an open, component‑driven system. Maintainers have final authority on technical decisions.
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-title">Maintainers & Contributors</div>
+          <div class="card-meta">Structure · Open Source</div>
+          <div class="card-body">
+            A small group of maintainers steward the code, documentation, and training sequences. Contributors propose changes
+            via transparent review.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">View Maintainer Charter</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Decision‑Making Process</div>
+          <div class="card-meta">Policy · Technical</div>
+          <div class="card-body">
+            Changes are evaluated for safety, non‑weaponization, and educational value. The Safety Layer rules cannot be
+            weakened or bypassed.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Read Governance Document</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Transparency Logs</div>
+          <div class="card-meta">Log · Public</div>
+          <div class="card-body">
+            Public logs record major updates, safety decisions, and license changes, ensuring the system remains accountable
+            to its civilian‑safe mission.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Open Logs</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Operator Dashboard -->
+    <section class="section" id="dashboard">
+      <div class="section-header">
+        <div class="section-title">Operator Dashboard</div>
+        <div class="section-subtitle">
+          A personalized view for captains and operators: licenses, vessels, progress, and update status.
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-title">Your Licenses</div>
+          <div class="card-meta">Panel · Identity</div>
+          <div class="card-body">
+            See which ceremonial licenses you hold, their renewal dates, and linked training modules.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">View License Wallet</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Your Starships</div>
+          <div class="card-meta">Panel · Fleet</div>
+          <div class="card-body">
+            A list of vessels associated with your captain identity, including registry status and stewardship history.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Open Fleet View</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Progress & Update Status</div>
+          <div class="card-meta">Panel · Status</div>
+          <div class="card-body">
+            Track which modules you’ve completed, which updates you’ve acknowledged, and which rituals are upcoming.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">View Timeline</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- LEAF Universe -->
+    <section class="section" id="leaf-universe">
+      <div class="section-header">
+        <div class="section-title">Space LEAF Universe Integration</div>
+        <div class="section-subtitle">
+          Space DMV is one division within the broader Space LEAF Corp ecosystem of civilian‑safe, ethics‑driven systems.
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-title">LEAF Ethics & Stewardship</div>
+          <div class="card-meta">Context · Philosophy</div>
+          <div class="card-body">
+            Learn the ethical foundations that guide Space LEAF Corp: non‑weaponization, care for sentient beings, and
+            responsibility in advanced civilizations.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Read Overview</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Cross‑Module Integrations</div>
+          <div class="card-meta">Context · Systems</div>
+          <div class="card-body">
+            See how Space DMV connects to other LEAF modules, such as educational environments, guardian systems, and
+            narrative training ecosystems.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">View Integration Map</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Future Expansions</div>
+          <div class="card-meta">Roadmap · Narrative</div>
+          <div class="card-body">
+            A living roadmap for new training sequences, kid‑safe tracks, and expanded fleet governance tools.
+          </div>
+          <div class="card-actions">
+            <span class="pill pill-accent">Open Roadmap</span>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    Space DMV – Space LEAF Corp · Civilian‑Safe, Non‑Governmental, Educational System.<br />
+    All content is ceremonial and narrative. No real‑world licensing, engineering, or propulsion authority is implied.
+  </footer>
+</body>
+</html>
