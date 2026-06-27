@@ -1,0 +1,16 @@
+# SpaceDMV — Security Contact File
+# Follows RFC 9116 (security.txt standard)
+
+Contact: mailto:security@spacedmv.leaf
+Contact: mailto:leaf-security@protonmail.com
+
+# Optional encryption key (add when available)
+# Encryption: https://spacedmv.leaf/pgp-key.txt
+
+Preferred-Languages: en
+Canonical: https://spacedmv.leaf/.well-known/security.txt
+
+Policy: https://github.com/SpaceDMV/SECURITY.md
+Acknowledgments: https://spacedmv.leaf/security/hall-of-thanks
+
+Expires: 2027-01-01T00:00:00Z
